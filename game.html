@@ -442,6 +442,7 @@
         let gameLoop;
         let invincible = false;
         let invincibleTimer = 0;
+        let waveTransition = false;
 
         // Power-ups
         let powerups = {
@@ -1023,11 +1024,15 @@
             });
 
             // Next level
-            if (enemies.length === 0) {
+            if (enemies.length === 0 && !waveTransition) {
+                waveTransition = true;
                 level++;
                 updateUI();
                 announceLevel();
-                setTimeout(spawnWave, 2000);
+                setTimeout(() => {
+                    spawnWave();
+                    waveTransition = false;
+                }, 2000);
             }
         }
 
@@ -1134,6 +1139,7 @@
             powerupItems = [];
             player.x = canvas.width / 2;
             invincible = false;
+            waveTransition = false;
             
             Object.keys(powerups).forEach(key => {
                 powerups[key].active = false;
