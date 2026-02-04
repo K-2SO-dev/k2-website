@@ -327,6 +327,22 @@ blockquote p {
     min-height: 60px;
 }
 
+/* Game Promo */
+.game-promo {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(255, 107, 74, 0.1));
+    border-radius: 24px;
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 60px 40px;
+    border: 1px solid var(--border);
+}
+
+.game-promo p {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
 /* Contact */
 .contact {
     text-align: center;
