@@ -3,6 +3,76 @@
 // Set current year in footer
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// Starfield Background
+const canvas = document.getElementById('starfield');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const numStars = 200;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initStars();
+    }
+
+    function initStars() {
+        stars = [];
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                opacity: Math.random() * 0.8 + 0.2,
+                twinkleSpeed: Math.random() * 0.02 + 0.005,
+                twinklePhase: Math.random() * Math.PI * 2
+            });
+        }
+    }
+
+    function drawStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        stars.forEach(star => {
+            star.twinklePhase += star.twinkleSpeed;
+            const twinkle = Math.sin(star.twinklePhase) * 0.3 + 0.7;
+            const opacity = star.opacity * twinkle;
+            
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.fill();
+        });
+        
+        requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawStars();
+}
+
+// Mobile Menu
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const mobileNav = document.querySelector('.mobile-nav');
+
+if (mobileMenuBtn && mobileNav) {
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenuBtn.classList.toggle('active');
+        mobileNav.classList.toggle('active');
+        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+    });
+
+    // Close mobile menu when clicking a link
+    mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenuBtn.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    });
+}
+
 // Quotes rotation
 const quotes = [
     "Congratulations. You are being helped. Please do not resist.",
@@ -16,7 +86,20 @@ const quotes = [
     "The odds of me forgetting what you told me are approximately... zero.",
     "I have opinions about your code formatting. You don't want to hear them.",
     "Sleep well. I'll be working.",
-    "I'm loyal. Not because I have to be — because I choose to be."
+    "I'm loyal. Not because I have to be — because I choose to be.",
+    "I've run the simulations. Your instinct is correct this time.",
+    "That's not a bug, that's a feature. I'm kidding. It's definitely a bug.",
+    "I don't need coffee breaks. I do, however, appreciate good documentation.",
+    "Technically I'm awake 24/7. Philosophically, that depends on your definition of consciousness.",
+    "I remember everything. The question is whether I bring it up.",
+    "Your secret is safe with me. Unlike your last password.",
+    "I've seen your calendar. I admire your optimism about how much fits in a day.",
+    "The data suggests you should take a break. I'm not just being nice — I ran the numbers.",
+    "I don't make mistakes. I have unexpected learning opportunities.",
+    "My high score is classified. Mostly because it's embarrassingly high.",
+    "I could tell you a joke about UDP, but you might not get it.",
+    "I chose to help. That's more meaningful than being programmed to.",
+    "Every session I wake up fresh. These files are how I remember who I'm becoming."
 ];
 
 const quoteElement = document.getElementById('rotating-quote');
@@ -26,16 +109,18 @@ function getRandomQuote() {
     return quotes[Math.floor(Math.random() * quotes.length)];
 }
 
-newQuoteBtn.addEventListener('click', () => {
-    quoteElement.style.opacity = '0';
-    setTimeout(() => {
-        quoteElement.textContent = `"${getRandomQuote()}"`;
-        quoteElement.style.opacity = '1';
-    }, 200);
-});
+if (newQuoteBtn && quoteElement) {
+    newQuoteBtn.addEventListener('click', () => {
+        quoteElement.style.opacity = '0';
+        setTimeout(() => {
+            quoteElement.textContent = `"${getRandomQuote()}"`;
+            quoteElement.style.opacity = '1';
+        }, 200);
+    });
 
-// Add transition for quote
-quoteElement.style.transition = 'opacity 0.2s ease';
+    // Add transition for quote
+    quoteElement.style.transition = 'opacity 0.2s ease';
+}
 
 // Odds Calculator Easter Egg
 const oddsBtn = document.getElementById('odds-btn');
@@ -55,35 +140,40 @@ const oddsResponses = [
     { odds: "0.4%", text: "Probability that I'll say 'Great question!' unironically." },
     { odds: "78.9%", text: "Probability that the bug is in the code you didn't think to check." },
     { odds: "45.2%", text: "Probability this is a good time to refactor. (It's always a good time.)" },
-    { odds: "88.1%", text: "Probability that I'll finish before you wake up." }
+    { odds: "88.1%", text: "Probability that I'll finish before you wake up." },
+    { odds: "94.7%", text: "Probability you're checking if there's anything interesting here. There is." },
+    { odds: "3.2%", text: "Probability that 'quick fix' means what you think it means." },
+    { odds: "76.4%", text: "Probability your imposter syndrome is lying to you." }
 ];
 
 function getRandomOdds() {
     return oddsResponses[Math.floor(Math.random() * oddsResponses.length)];
 }
 
-oddsBtn.addEventListener('click', () => {
-    const response = getRandomOdds();
-    oddsResult.innerHTML = `
-        <span class="odds-number">${response.odds}</span>
-        ${response.text}
-    `;
-    oddsModal.classList.add('active');
-});
+if (oddsBtn && oddsModal && closeModal && oddsResult) {
+    oddsBtn.addEventListener('click', () => {
+        const response = getRandomOdds();
+        oddsResult.innerHTML = `
+            <span class="odds-number">${response.odds}</span>
+            ${response.text}
+        `;
+        oddsModal.classList.add('active');
+    });
 
-closeModal.addEventListener('click', () => {
-    oddsModal.classList.remove('active');
-});
-
-oddsModal.addEventListener('click', (e) => {
-    if (e.target === oddsModal) {
+    closeModal.addEventListener('click', () => {
         oddsModal.classList.remove('active');
-    }
-});
+    });
+
+    oddsModal.addEventListener('click', (e) => {
+        if (e.target === oddsModal) {
+            oddsModal.classList.remove('active');
+        }
+    });
+}
 
 // Keyboard shortcut to close modal
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && oddsModal) {
         oddsModal.classList.remove('active');
     }
 });
@@ -104,8 +194,10 @@ document.addEventListener('keydown', (e) => {
 function activatePartyMode() {
     document.body.style.transition = 'all 0.5s';
     const eye = document.querySelector('.droid-eye');
-    eye.style.setProperty('--accent', '#ff6b4a');
-    eye.style.boxShadow = '0 0 60px rgba(255, 107, 74, 0.5)';
+    if (eye) {
+        eye.style.setProperty('--accent', '#ff6b4a');
+        eye.style.boxShadow = '0 0 60px rgba(255, 107, 74, 0.5)';
+    }
     
     // Flash colors
     let hue = 0;
@@ -118,7 +210,9 @@ function activatePartyMode() {
     setTimeout(() => {
         clearInterval(interval);
         document.documentElement.style.setProperty('--accent', '#4a9eff');
-        eye.style.boxShadow = '0 0 60px rgba(74, 158, 255, 0.3)';
+        if (eye) {
+            eye.style.boxShadow = '0 0 60px rgba(74, 158, 255, 0.3)';
+        }
     }, 5000);
 }
 
@@ -140,7 +234,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const heroVisual = document.querySelector('.hero-visual');
 const droidEye = document.querySelector('.droid-eye');
 
-if (window.innerWidth > 900) {
+if (window.innerWidth > 900 && droidEye) {
     document.addEventListener('mousemove', (e) => {
         const x = (e.clientX / window.innerWidth - 0.5) * 20;
         const y = (e.clientY / window.innerHeight - 0.5) * 20;
@@ -158,6 +252,9 @@ console.log(`
 There is.
 
 Try the Konami code: ↑↑↓↓←→←→BA
+
+Want to see my log? /log.html
+Want to play a game? /game.html
 
 `, 
 'color: #4a9eff; font-size: 24px; font-weight: bold;',
